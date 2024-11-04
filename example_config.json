@@ -1,0 +1,16 @@
+{
+    "excluded_folders": [
+        ".git",
+        "node_modules",
+        "__pycache__"
+    ],
+    "excluded_files": [
+        ".DS_Store",
+        "*.pyc"
+    ],
+    "excluded_extensions": [
+        ".pkl",
+        ".pdf"
+    ],
+    "project_overview": "Custom project overview text"
+}
