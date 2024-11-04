@@ -10,7 +10,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'project-to-xml=project_analyzer.cli:main',
+            'project-to-xml=project_to_xml.cli:main',
         ],
     },
     author="zegri1",

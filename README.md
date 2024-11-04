@@ -20,7 +20,7 @@ While designed with AI code analysis in mind (particularly optimized for Claude 
 ```bash
 # From source
 git clone https://github.com/zegri1/project-to-xml.git
-cd project-analyzer
+cd project_to_xml
 pip install -e .
 ```
 
@@ -30,22 +30,22 @@ pip install -e .
 
 ```bash
 # Basic usage (analyzes current directory)
-analyze-project
+project-to-xml
 
 # Specify project directory
-analyze-project /path/to/project
+project-to-xml /path/to/project
 
 # Custom output file
-analyze-project /path/to/project -o output.xml
+project-to-xml /path/to/project -o output.xml
 
 # Use specific configuration file
-analyze-project /path/to/project -c config.json
+project-to-xml /path/to/project -c config.json
 ```
 
 ### Python API
 
 ```python
-from project_analyzer import ProjectAnalyzer
+from project_to_xml import ProjectAnalyzer
 
 # Basic usage - will look for analyzer_config.json in current and target directories
 analyzer = ProjectAnalyzer()
@@ -130,7 +130,7 @@ The tool generates an XML file with the following structure:
 git clone https://github.com/zegri1/project-to-xml.git
 
 # Install in development mode
-cd project-analyzer
+cd project_to_xml
 pip install -e .
 ```
 

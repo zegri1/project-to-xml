@@ -207,11 +207,19 @@ class ProjectAnalyzer:
 
             if content_elem.parentNode.hasAttribute('path'):
                 file_path = content_elem.parentNode.getAttribute('path')
+                full_path = os.path.join(folder_path, file_path)
                 try:
-                    with open(os.path.join(folder_path, file_path), 'r', encoding='utf-8') as f:
-                        cdata = dom.createCDATASection(f.read())
+                    with open(full_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                        if ']]>' in content:
+                            print(f"Warning: Found ']]>' in file: {full_path}")
+                            # Either replace the sequence or handle it another way
+                            content = content.replace(']]>', ']]]]><![CDATA[>')
+                        cdata = dom.createCDATASection(content)
                         content_elem.appendChild(cdata)
                 except Exception as e:
+                    print(f"Error processing file: {full_path}")
+                    print(f"Error details: {str(e)}")
                     cdata = dom.createCDATASection(f"Error reading file: {str(e)}")
                     content_elem.appendChild(cdata)
 
