@@ -57,5 +57,6 @@
             "requirements.txt"
         ]
     },
+    "default_output_name": "project_structure.xml",
     "project_overview": "Python project structure analysis"
 }

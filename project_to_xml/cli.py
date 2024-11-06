@@ -1,6 +1,5 @@
 import argparse
 
-from .analyzer import ProjectAnalyzer
 from project_to_xml.analyzer import ProjectAnalyzer  # Updated import
 
 

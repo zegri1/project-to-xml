@@ -18,35 +18,66 @@ class ProjectAnalyzer:
         """
         self.config = None
         self.default_config = {
-            "excluded_folders": [
-                ".git",
-                "node_modules",
-                "__pycache__",
-                "venv",
-                ".idea",
-                ".venv",
-                "dist",
-                "build"
-            ],
-            "excluded_files": [
-                ".DS_Store",
-                ".gitignore",
-                "*.pyc",
-                "*.pyo",
-                "*.pyd",
-                "*.so",
-                "*.dylib",
-                "*.dll"
-            ],
-            "excluded_extensions": [
-                ".pkl",
-                ".pdf",
-                ".jpg",
-                ".png",
-                ".exe"
-            ],
+            "full_excludes": {
+                "folders": [
+                    ".git",
+                    "node_modules",
+                    "__pycache__",
+                    ".venv",
+                    "venv",
+                    "env",
+                    ".idea",
+                    ".vscode",
+                    "dist",
+                    "build",
+                    "eggs",
+                    ".eggs",
+                    ".pytest_cache",
+                    ".mypy_cache",
+                    ".coverage",
+                    ".tox"
+                ],
+                "files": [
+                    ".DS_Store",
+                    "*.pyc",
+                    "*.pyo",
+                    "*.pyd",
+                    "*.so",
+                    "*.dylib",
+                    "*.dll",
+                    ".gitignore",
+                    ".coverage",
+                    ".python-version"
+                ]
+            },
+            "content_excludes": {
+                "folders": [
+                    "migrations",
+                    "static",
+                    "media"
+                ],
+                "files": [
+                    "__init__.py",
+                    "*.log",
+                    "*.pkl",
+                    "*.pdf",
+                    "*.jpg",
+                    "*.png",
+                    "*.svg",
+                    "*.sqlite3",
+                    "*.db",
+                    "*.csv",
+                    "*.json",
+                    "*.xml",
+                    "*.yaml",
+                    "*.yml",
+                    "*.env",
+                    "*.lock",
+                    "requirements.txt"
+                ]
+            },
             "default_output_name": "project_structure.xml",
-            "project_overview": "This is a PyCharm project analysis."
+            "project_overview": "Python project structure analysis"
         }
 
         # Initialize with provided config or search for default config file
@@ -106,7 +137,12 @@ class ProjectAnalyzer:
 
         Args:
             path: Path to check for exclusion
-            content_only: If True, only check content_excludes. If False, check both full_excludes and content_excludes
+            content_only: If True, checks both full_excludes and content_excludes (for content parsing).
+                         If False, checks only full_excludes (for structure display).
+
+                         This means:
+                         - When checking structure (content_only=False): only fully excluded items are hidden
+                         - When checking content (content_only=True): both fully excluded and content-excluded items are hidden
 
         Returns:
             bool: True if path should be excluded, False otherwise
@@ -123,21 +159,21 @@ class ProjectAnalyzer:
             return False
 
         if os.path.isdir(path):
-            # Check full directory excludes if we're not only checking content
-            if not content_only and name in self.config["full_excludes"]["folders"]:
-                return True
-            # Check content directory excludes
-            if name in self.config["content_excludes"]["folders"]:
-                return True
+            if content_only:
+                # When checking content, exclude both full and content excludes
+                return (name in self.config["full_excludes"]["folders"] or
+                        name in self.config["content_excludes"]["folders"])
+            else:
+                # When checking structure, only exclude full excludes
+                return name in self.config["full_excludes"]["folders"]
         else:
-            # Check full file excludes if we're not only checking content
-            if not content_only and matches_patterns(name, self.config["full_excludes"]["files"]):
-                return True
-            # Check content file excludes
-            if matches_patterns(name, self.config["content_excludes"]["files"]):
-                return True
-
-        return False
+            if content_only:
+                # When checking content, exclude both full and content excludes
+                return (matches_patterns(name, self.config["full_excludes"]["files"]) or
+                        matches_patterns(name, self.config["content_excludes"]["files"]))
+            else:
+                # When checking structure, only exclude full excludes
+                return matches_patterns(name, self.config["full_excludes"]["files"])
     def create_project_xml(self, folder_path: str, output_file: Optional[str] = None) -> str:
         """
         Generate XML structure for the project.
