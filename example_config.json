@@ -1,16 +1,61 @@
 {
-    "excluded_folders": [
-        ".git",
-        "node_modules",
-        "__pycache__"
-    ],
-    "excluded_files": [
-        ".DS_Store",
-        "*.pyc"
-    ],
-    "excluded_extensions": [
-        ".pkl",
-        ".pdf"
-    ],
-    "project_overview": "Custom project overview text"
+    "full_excludes": {
+        "folders": [
+            ".git",
+            "node_modules",
+            "__pycache__",
+            ".venv",
+            "venv",
+            "env",
+            ".idea",
+            ".vscode",
+            "dist",
+            "build",
+            "eggs",
+            ".eggs",
+            ".pytest_cache",
+            ".mypy_cache",
+            ".coverage",
+            ".tox"
+        ],
+        "files": [
+            ".DS_Store",
+            "*.pyc",
+            "*.pyo",
+            "*.pyd",
+            "*.so",
+            "*.dylib",
+            "*.dll",
+            ".gitignore",
+            ".coverage",
+            ".python-version"
+        ]
+    },
+    "content_excludes": {
+        "folders": [
+            "migrations",
+            "static",
+            "media"
+        ],
+        "files": [
+            "__init__.py",
+            "*.log",
+            "*.pkl",
+            "*.pdf",
+            "*.jpg",
+            "*.png",
+            "*.svg",
+            "*.sqlite3",
+            "*.db",
+            "*.csv",
+            "*.json",
+            "*.xml",
+            "*.yaml",
+            "*.yml",
+            "*.env",
+            "*.lock",
+            "requirements.txt"
+        ]
+    },
+    "project_overview": "Python project structure analysis"
 }

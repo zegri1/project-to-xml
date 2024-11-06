@@ -11,7 +11,7 @@ While designed with AI code analysis in mind (particularly optimized for Claude 
 
 - 📁 Hierarchical directory structure representation
 - 📝 File contents preserved in CDATA sections
-- ⚙️ Configurable file/folder exclusions
+- ⚙️ Smart exclusion system (structure-only vs. complete exclusion)
 - 🔧 Both API and CLI interfaces
 - 🚫 Default exclusions for common patterns (.git, __pycache__, etc.)
 
@@ -68,23 +68,49 @@ Create an `analyzer_config.json` file to customize the analyzer's behavior:
 
 ```json
 {
-    "excluded_folders": [
-        ".git",
-        "node_modules",
-        "__pycache__",
-        "venv"
-    ],
-    "excluded_files": [
-        ".DS_Store",
-        "*.pyc"
-    ],
-    "excluded_extensions": [
-        ".pkl",
-        ".pdf"
-    ],
+    "full_excludes": {
+        "folders": [
+            ".git",
+            "node_modules",
+            "__pycache__",
+            "venv",
+            ".idea"
+        ],
+        "files": [
+            ".DS_Store",
+            "*.pyc",
+            "*.pyo",
+            ".gitignore"
+        ]
+    },
+    "content_excludes": {
+        "folders": [
+            "migrations",
+            "static",
+            "media"
+        ],
+        "files": [
+            "__init__.py",
+            "*.log",
+            "*.pkl",
+            "*.pdf",
+            "*.sqlite3",
+            "*.json"
+        ]
+    },
     "project_overview": "Custom project description"
 }
 ```
+
+### Exclusion Types
+
+The tool supports two types of exclusions:
+- **Full Excludes**: Items that are completely excluded from both the structure overview and content parsing
+- **Content Excludes**: Items that appear in the structure overview but whose content is not parsed
+
+This allows you to:
+1. Completely hide irrelevant files/folders (like `.git`)
+2. Show important structural elements while skipping their content (like database files or `__init__.py`)
 
 ### Project-Specific Configuration
 
@@ -138,37 +164,67 @@ pip install -e .
 
 If no configuration file is found, the following defaults are used:
 
-```python
+```json
 {
-    "excluded_folders": [
-        ".git",
-        "node_modules",
-        "__pycache__",
-        "venv",
-        ".idea",
-        ".venv",
-        "dist",
-        "build"
-    ],
-    "excluded_files": [
-        ".DS_Store",
-        ".gitignore",
-        "*.pyc",
-        "*.pyo",
-        "*.pyd",
-        "*.so",
-        "*.dylib",
-        "*.dll"
-    ],
-    "excluded_extensions": [
-        ".pkl",
-        ".pdf",
-        ".jpg",
-        ".png",
-        ".exe"
-    ],
-    "default_output_name": "project_structure.xml",
-    "project_overview": "This is a PyCharm project analysis."
+    "full_excludes": {
+        "folders": [
+            ".git",
+            "node_modules",
+            "__pycache__",
+            ".venv",
+            "venv",
+            "env",
+            ".idea",
+            ".vscode",
+            "dist",
+            "build",
+            "eggs",
+            ".eggs",
+            ".pytest_cache",
+            ".mypy_cache",
+            ".coverage",
+            ".tox"
+        ],
+        "files": [
+            ".DS_Store",
+            "*.pyc",
+            "*.pyo",
+            "*.pyd",
+            "*.so",
+            "*.dylib",
+            "*.dll",
+            ".gitignore",
+            ".coverage",
+            ".python-version",
+            ".env"
+        ]
+    },
+    "content_excludes": {
+        "folders": [
+            "migrations",
+            "static",
+            "media"
+        ],
+        "files": [
+            "__init__.py",
+            "*.log",
+            "*.pkl",
+            "*.pdf",
+            "*.jpg",
+            "*.png",
+            "*.svg",
+            "*.sqlite3",
+            "*.db",
+            "*.csv",
+            "*.json",
+            "*.xml",
+            "*.yaml",
+            "*.yml",
+            "*.lock",
+            "requirements.txt"
+        ]
+    },
+    "project_overview": "This is a Python project analysis."
 }
 ```
 

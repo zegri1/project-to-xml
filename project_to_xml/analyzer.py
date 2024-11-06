@@ -100,25 +100,44 @@ class ProjectAnalyzer:
             except Exception as e:
                 print(f"Warning: Error loading project config file: {e}")
 
-    def should_exclude(self, path: str) -> bool:
-        """Check if the path should be excluded based on configured patterns."""
+    def should_exclude(self, path: str, content_only: bool = False) -> bool:
+        """
+        Check if the path should be excluded based on configured patterns.
+
+        Args:
+            path: Path to check for exclusion
+            content_only: If True, only check content_excludes. If False, check both full_excludes and content_excludes
+
+        Returns:
+            bool: True if path should be excluded, False otherwise
+        """
         name = os.path.basename(path)
-        ext = os.path.splitext(name)[1]
+
+        def matches_patterns(filename: str, patterns: list) -> bool:
+            for pattern in patterns:
+                if pattern.startswith('*'):
+                    if filename.endswith(pattern[1:]):
+                        return True
+                elif filename == pattern:
+                    return True
+            return False
 
         if os.path.isdir(path):
-            return name in self.config["excluded_folders"]
-
-        if ext in self.config["excluded_extensions"]:
-            return True
-
-        for pattern in self.config["excluded_files"]:
-            if pattern.startswith('*'):
-                if name.endswith(pattern[1:]):
-                    return True
-            elif name == pattern:
+            # Check full directory excludes if we're not only checking content
+            if not content_only and name in self.config["full_excludes"]["folders"]:
                 return True
-        return False
+            # Check content directory excludes
+            if name in self.config["content_excludes"]["folders"]:
+                return True
+        else:
+            # Check full file excludes if we're not only checking content
+            if not content_only and matches_patterns(name, self.config["full_excludes"]["files"]):
+                return True
+            # Check content file excludes
+            if matches_patterns(name, self.config["content_excludes"]["files"]):
+                return True
 
+        return False
     def create_project_xml(self, folder_path: str, output_file: Optional[str] = None) -> str:
         """
         Generate XML structure for the project.
@@ -146,7 +165,7 @@ class ProjectAnalyzer:
 
             for item in items:
                 full_path = os.path.join(path, item)
-                if self.should_exclude(full_path):
+                if self.should_exclude(full_path,content_only=False):
                     continue
 
                 if os.path.isdir(full_path):
@@ -166,7 +185,7 @@ class ProjectAnalyzer:
 
             for item in items:
                 full_path = os.path.join(path, item)
-                if self.should_exclude(full_path):
+                if self.should_exclude(full_path, content_only=True):
                     continue
 
                 if os.path.isfile(full_path):
